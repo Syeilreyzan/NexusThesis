@@ -5,8 +5,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
 
-Route::prefix('{current_team}')
-    ->middleware(['auth', 'verified', EnsureTeamMembership::class])
+// testing
+Route::view('/test', 'pages.index')->name('test');
+
+
+Route::prefix('student')->middleware(['auth'])
     ->group(function () {
         Route::view('dashboard', 'dashboard')->name('dashboard');
     });
