@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LecturerDashboardController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AdminDashboardController;
 
 
 // Route::view('/', 'welcome')->name('home');
@@ -87,5 +88,10 @@ Route::middleware(['auth', 'role:student|lecturer|admin'])->group(function () {
 Route::middleware(['auth', 'role:lecturer'])->prefix('lecturer')->group(function () {
     Route::redirect('/', '/lecturer/dashboard');
     Route::get('/dashboard', [LecturerDashboardController::class, 'index'])->name('lecturer.dashboard');
+});
+
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+    Route::redirect('/', '/admin/dashboard');
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 });
 require __DIR__ . '/settings.php';
