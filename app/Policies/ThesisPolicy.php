@@ -46,7 +46,9 @@ class ThesisPolicy
      */
     public function create(User $user): bool
     {
-         return $user->can('submit thesis');
+        //  return $user->can('submit thesis');
+         return $user->hasRole('student')
+            && $user->can('submit thesis');
     }
 
     /**
@@ -91,5 +93,12 @@ class ThesisPolicy
     {
         return $user->can('download thesis')
             && $this->view($user, $thesis);
+    }
+
+     public function review(User $user, Thesis $thesis): bool
+    {
+        return $user->hasRole('lecturer')
+            && $user->can('review thesis')
+            && $thesis->supervisor_id === $user->id;
     }
 }
