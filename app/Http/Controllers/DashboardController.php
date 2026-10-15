@@ -14,12 +14,12 @@ class DashboardController extends Controller
             return redirect()->route('lecturer.dashboard');
         }
 
-        if ($user->hasRole('student')) {
-            return redirect()->route('student.dashboard');
-        }
         if ($user->hasRole('admin')) {
             return redirect()->route('admin.dashboard');
         }
+        // if ($user->hasRole('student')) {
+        //     return redirect()->route('student.dashboard');
+        // }
 
         return view('dashboard');
     }

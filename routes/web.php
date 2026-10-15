@@ -38,6 +38,13 @@ Route::middleware('auth')->group(function () {
         ->name('theses.show')
         ->middleware('permission:view theses');
 
+    Route::get('/theses/{thesis}/document/view', [
+        ThesisController::class,
+        'viewDocument',
+    ])
+        ->name('theses.document.view')
+        ->middleware('permission:view theses');
+
     Route::post('/theses', [ThesisController::class, 'store'])
         ->middleware('permission:submit thesis');
 
@@ -83,6 +90,10 @@ Route::get('/', function () {
 Route::middleware(['auth', 'role:student|lecturer|admin'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 });
+
+Route::view('/student/dashboard', 'dashboard')
+    ->middleware(['auth', 'role:student'])
+    ->name('student.dashboard');
 
 // routing for lecturer
 Route::middleware(['auth', 'role:lecturer'])->prefix('lecturer')->group(function () {
