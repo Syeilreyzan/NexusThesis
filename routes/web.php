@@ -37,6 +37,13 @@ Route::middleware('auth')->group(function () {
         ->name('theses.show')
         ->middleware('permission:view theses');
 
+    Route::get('/theses/{thesis}/document/view', [
+        ThesisController::class,
+        'viewDocument',
+    ])
+        ->name('theses.document.view')
+        ->middleware('permission:view theses');
+
     Route::post('/theses', [ThesisController::class, 'store'])
         ->middleware('permission:submit thesis');
 

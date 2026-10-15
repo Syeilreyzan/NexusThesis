@@ -24,6 +24,8 @@ class RolePermissionSeeder extends Seeder
             'review thesis',
             'manage users',
             'download thesis',
+            'delete theses',
+            'submit theses',
         ];
 
         foreach ($permissions as $permission) {
@@ -59,7 +61,9 @@ class RolePermissionSeeder extends Seeder
         $student->syncPermissions([
             'view theses',
             'submit thesis',
+            'submit theses',
             'download thesis',
+            'delete theses',
         ]);
     }
 }
