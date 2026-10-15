@@ -19,8 +19,18 @@ class PopulateUserandThesis extends Seeder
         // Fetch existing roles
         $studentRole = Role::findByName('student');
         $lecturerRole = Role::findByName('lecturer');
+        $adminRole = Role::findByName('admin');
 
         // 1. Create Generic Lecturer Users
+        $admin1 = User::firstOrCreate(
+            ['email' => 'admin1@example.com'],
+            [
+                'name' => 'Admin One',
+                'password' => Hash::make('password'),
+            ]
+        );
+        $admin1->assignRole($adminRole);
+
         $lecturer1 = User::firstOrCreate(
             ['email' => 'lecturer1@example.com'],
             [
