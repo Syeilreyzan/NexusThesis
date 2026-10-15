@@ -19,17 +19,5 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             PopulateUserandThesis::class
         ]);
-
-        // User::factory(10)->create();
-
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
-        $this->call([
-            RoleSeeder::class, 
-            RolePermissionSeeder::class, // Use your actual role/permission seeder name
-            UserSeeder::class,
-        ]);
     }
 }

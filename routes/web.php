@@ -90,6 +90,10 @@ Route::middleware(['auth', 'role:student|lecturer|admin'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 });
 
+Route::view('/student/dashboard', 'dashboard')
+    ->middleware(['auth', 'role:student'])
+    ->name('student.dashboard');
+
 // routing for lecturer
 Route::middleware(['auth', 'role:lecturer'])->prefix('lecturer')->group(function () {
     Route::redirect('/', '/lecturer/dashboard');
