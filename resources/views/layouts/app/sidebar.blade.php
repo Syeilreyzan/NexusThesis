@@ -6,7 +6,9 @@
     <body class="min-h-screen bg-white dark:bg-zinc-800">
         <flux:sidebar sticky collapsible="mobile" class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
             <flux:sidebar.header>
-                <x-icons.logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate />
+                <div class="flex items-center">
+                    <x-icons.logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate />
+                </div>
                 <flux:sidebar.collapse class="lg:hidden" />
             </flux:sidebar.header>
 
