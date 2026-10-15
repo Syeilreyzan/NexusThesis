@@ -88,5 +88,4 @@ Route::middleware(['auth', 'role:lecturer'])->prefix('lecturer')->group(function
     Route::redirect('/', '/lecturer/dashboard');
     Route::get('/dashboard', [LecturerDashboardController::class, 'index'])->name('lecturer.dashboard');
 });
-
 require __DIR__ . '/settings.php';
