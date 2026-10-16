@@ -28,9 +28,12 @@ Then open [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser.
 Missing a tool, using a ZIP download, or hit an error? The full steps, expected output, and troubleshooting are in the [Setup Guide](docs/SETUP.md).
 
 ## Documentation
+<<<<<<< HEAD
 
 - [User Guide](docs/USER_GUIDE.md): what NexusThesis is, who uses it, how a thesis moves through the system, and how to try a demo. No technical knowledge needed.
 - [Setup Guide](docs/SETUP.md): requirements, installation on Windows and macOS, running the app, updating, and troubleshooting.
+=======
+>>>>>>> origin/main
 ## Run Database Migrations
 
 The setup command already runs migrations. To apply any new migrations later, run:
@@ -70,6 +73,12 @@ php artisan test tests/Feature/Auth/RegistrationTest.php
 ```
 
 ## Getting Updates
+<<<<<<< HEAD
+=======
+
+- [User Guide](docs/USER_GUIDE.md): what NexusThesis is, who uses it, how a thesis moves through the system, and how to try a demo. No technical knowledge needed.
+- [Setup Guide](docs/SETUP.md): requirements, installation on Windows and macOS, running the app, updating, and troubleshooting.
+>>>>>>> origin/main
 
 ## Security notes
 
