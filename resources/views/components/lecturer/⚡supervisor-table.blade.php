@@ -5,6 +5,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Computed;
 use Flux\Flux;
+use App\Helpers\Logger;
 
 new class extends Component {
     use WithPagination;
@@ -28,8 +29,9 @@ new class extends Component {
     public function svTheses()
     {
         $query = Thesis::query()
-            ->with('student')
+            ->with(['student', 'document'])
             ->where('supervisor_id', auth()->id())
+            ->where('status', '!=', 'draft')
             ->latest();
 
         if (!empty($this->search)) {
@@ -45,6 +47,17 @@ new class extends Component {
         return $query->paginate(10);
     }
 
+    // --- Computed Property for Selected Thesis ---
+    #[Computed]
+    public function selectedThesis()
+    {
+        if (!$this->selectedThesisId) {
+            return null;
+        }
+
+        return Thesis::with(['student', 'document'])->find($this->selectedThesisId);
+    }
+
     // Point back to your ThesisDocumentController to view the uploaded file
     public function previewThesis(int $thesisId)
     {
@@ -53,7 +66,6 @@ new class extends Component {
         $this->selectedThesisId = $thesis->id;
 
         if ($thesis->document) {
-            // FIX: Use the $thesis object, not the integer ID
             $this->previewDocumentUrl = route('theses.document.view', ['thesis' => $thesis->slug ?? $thesis->id]);
         } else {
             $this->previewDocumentUrl = null;
@@ -77,13 +89,25 @@ new class extends Component {
 
             $thesis->update(['status' => $status]);
 
+            // --- Added Logger ---
+            $supervisorName = auth()->user()->name;
+            $actionTag = $status === 'approved' ? 'thesis_approved' : 'thesis_rejected';
+            $statusText = $status === 'approved' ? 'approved' : 'rejected';
+
+            Logger::action(
+                $actionTag,
+                "Supervisor {$supervisorName} {$statusText} thesis '{$thesis->title}' (ID: {$thesis->id})."
+            );
+            // --------------------
+
             Flux::modal('preview-thesis')->close();
+            Flux::modal('update-thesis-status')->close();
 
             $this->selectedThesisId = null;
             $this->previewDocumentUrl = null;
 
-            $statusText = $status === 'approved' ? 'Approved' : 'Rejected';
-            Flux::toast("Thesis status has been {$statusText}.");
+            $toastText = $status === 'approved' ? 'Approved' : 'Rejected';
+            Flux::toast("Thesis status has been {$toastText}.");
         }
     }
 };
@@ -234,15 +258,17 @@ new class extends Component {
                     <flux:button variant="ghost">Cancel</flux:button>
                 </flux:modal.close>
 
-                <div class="flex gap-3">
-                    <flux:button variant="danger" icon="x-mark" wire:click="updateStatus('rejected')" wire:loading.attr="disabled">
-                        Reject
-                    </flux:button>
+                @if($this->selectedThesis && $this->selectedThesis->status === 'pending_approval')
+                    <div class="flex gap-3">
+                        <flux:button variant="danger" icon="x-mark" wire:click="updateStatus('rejected')" wire:loading.attr="disabled" wire:target="updateStatus">
+                            Reject
+                        </flux:button>
 
-                    <flux:button variant="primary" icon="check" wire:click="updateStatus('approved')" wire:loading.attr="disabled">
-                        Approve
-                    </flux:button>
-                </div>
+                        <flux:button variant="primary" icon="check" wire:click="updateStatus('approved')" wire:loading.attr="disabled" wire:target="updateStatus">
+                            Approve
+                        </flux:button>
+                    </div>
+                @endif
             </div>
         </div>
     </flux:modal>

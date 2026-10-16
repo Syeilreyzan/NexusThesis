@@ -19,7 +19,13 @@
                     <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
-                   
+
+                    @role('admin')
+                        <flux:sidebar.item icon="document-text" :href="route('admin.logs')" :current="request()->routeIs('admin.logs')" wire:navigate>
+                            {{ __('Activity logs') }}
+                        </flux:sidebar.item>
+                    @endrole
+
                     {{-- <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('User') }}
                     </flux:sidebar.item>

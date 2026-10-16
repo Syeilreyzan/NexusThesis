@@ -7,6 +7,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Thesis;
 use App\Models\User;
 use Flux\Flux;
+use App\Helpers\Logger;
 
 new class extends Component
 {
@@ -128,6 +129,15 @@ new class extends Component
                 'examiner_id' => $this->selectedExaminerId,
             ]);
 
+            // Fetch the admin and the assigned examiner to get their real names
+            $adminName = auth()->user()->name;
+            $examiner = \App\Models\User::find($this->selectedExaminerId);
+
+            Logger::action(
+                'examiner_assigned',
+                "Admin {$adminName} assigned {$examiner->name} (ID: {$examiner->id}) as examiner for thesis '{$thesis->title}' (ID: {$thesis->id})."
+            );
+
             Flux::modal('assign-examiner')->close();
             $this->selectedThesisId = null;
             $this->selectedExaminerId = null;
@@ -141,21 +151,18 @@ new class extends Component
         return redirect()->route('theses.edit', $id);
     }
 
-    public function submitThesis($id)
-    {
-        $thesis = Thesis::findOrFail($id);
-
-        if ($thesis->student_id === auth()->id() && $thesis->status === 'draft') {
-            $thesis->update(['status' => 'submitted']);
-            session()->flash('success', 'Thesis submitted successfully.');
-        }
-    }
-
     public function deleteThesis()
     {
         if ($this->selectedThesisId) {
             $thesis = Thesis::findOrFail($this->selectedThesisId);
             $thesis->delete();
+
+            $adminName = auth()->user()->name;
+            
+            Logger::action(
+                'admin_delete_thesis',
+                "Admin {$adminName} deleted {$thesis->title} (ID: {$thesis->id})."
+            );
 
             $this->selectedThesisId = null;
             session()->flash('success', 'Thesis removed.');

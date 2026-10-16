@@ -104,5 +104,6 @@ Route::middleware(['auth', 'role:lecturer'])->prefix('lecturer')->group(function
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::redirect('/', '/admin/dashboard');
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+    Route::livewire('/logs', 'pages::admin.logs')->name('admin.logs');
 });
 require __DIR__ . '/settings.php';

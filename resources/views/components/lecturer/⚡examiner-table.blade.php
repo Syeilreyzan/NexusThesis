@@ -5,6 +5,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Computed;
 use Flux\Flux;
+use App\Helpers\Logger; // Added Logger import
 
 new class extends Component {
     use WithPagination;
@@ -74,7 +75,6 @@ new class extends Component {
         return $query->paginate(10);
     }
 
-    // Added a computed property to cleanly fetch the selected thesis without using @php in Blade
     #[Computed]
     public function selectedThesis()
     {
@@ -118,6 +118,10 @@ new class extends Component {
         if ($this->selectedThesisId) {
             $thesis = Thesis::findOrFail($this->selectedThesisId);
 
+            if ($thesis->examiner_id !== auth()->id()) {
+                abort(403, 'Unauthorized action.');
+            }
+
             $formattedGrade = $this->gradeScore . '% (' . explode(' ', $this->gradeStatus)[0] . ')';
 
             $thesis->update([
@@ -125,6 +129,14 @@ new class extends Component {
                 'grade_status' => 'completed',
                 'status' => 'completed'
             ]);
+
+            // --- Added Logger for Grade Submission ---
+            $examinerName = auth()->user()->name;
+            Logger::action(
+                'grade_submitted',
+                "Examiner {$examinerName} assigned grade {$formattedGrade} to thesis '{$thesis->title}' (ID: {$thesis->id})."
+            );
+            // ----------------------------------------
 
             Flux::modal('grading-modal')->close();
             $this->selectedThesisId = null;
@@ -201,7 +213,6 @@ new class extends Component {
                             color="{{ match($thesis->status) {
                                 'draft' => 'zinc',
                                 'pending_approval', 'approved' => 'amber',
-
                                 'completed' => 'green',
                                 'rejected' => 'red',
                                 default => 'zinc',
@@ -270,7 +281,6 @@ new class extends Component {
                     <flux:button variant="ghost">Close</flux:button>
                 </flux:modal.close>
 
-                {{-- Uses the new computed property instead of inline PHP --}}
                 @if ($this->selectedThesis)
                     <div>
                         @if (!$this->selectedThesis->grade)
