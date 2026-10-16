@@ -50,7 +50,7 @@ class ThesisPolicy
     public function create(User $user): bool
     {
         //  return $user->can('submit thesis');
-         return $user->hasRole('student')
+        return $user->hasRole('student')
             && $user->can('submit thesis');
     }
 
@@ -73,7 +73,9 @@ class ThesisPolicy
      */
     public function delete(User $user, Thesis $thesis): bool
     {
-        return false;
+        return $user->hasRole('student')
+            && $user->can('delete theses')
+            && $thesis->student_id === $user->id;
     }
 
     /**
@@ -98,7 +100,7 @@ class ThesisPolicy
             && $this->view($user, $thesis);
     }
 
-     public function review(User $user, Thesis $thesis): bool
+    public function review(User $user, Thesis $thesis): bool
     {
         return $user->hasRole('lecturer')
             && $user->can('review thesis')

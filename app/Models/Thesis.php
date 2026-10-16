@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 
 class Thesis extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
