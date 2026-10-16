@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Livewire\WithFileUploads;
 use App\Models\User;
+use App\Helpers\Logger;
 
 new class extends Component {
     use WithPagination, WithFileUploads;
@@ -120,7 +121,10 @@ new class extends Component {
             ]);
 
             $this->handleDocumentUpload($thesis);
+
+            Logger::action('thesis_created', "Student created thesis ID: {$thesis->id}");
         });
+
 
         $this->resetForm();
         $this->modal('add-thesis')->close();
@@ -218,6 +222,7 @@ new class extends Component {
         }
 
         $thesis->update(['status' => 'pending_approval']);
+        Logger::action('thesis_submitted', "Student submitted thesis ID: {$thesis->id}");
 
         unset($this->theses);
         Flux::toast('Thesis submitted successfully.');

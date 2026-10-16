@@ -5,6 +5,8 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Computed;
 use Spatie\Permission\Models\Role;
+use App\Helpers\Logger;
+use Flux\Flux; // Added missing Flux import
 
 new class extends Component {
     use WithPagination;
@@ -12,6 +14,7 @@ new class extends Component {
     // --- Search & Filter Properties ---
     public string $search = '';
     public string $roleFilter = '';
+    public ?int $selectedUserId = null; // Fixed property type and initial value
 
     // --- Reset pagination when filters change ---
     public function updatedSearch()
@@ -73,6 +76,14 @@ new class extends Component {
 
             // This will automatically perform a Soft Delete because of the SoftDeletes trait
             $user->delete();
+
+            // Defined $adminName before using it in the logger
+            $adminName = auth()->user()->name;
+
+            Logger::action(
+                'admin_deleted_user',
+                "Admin {$adminName} deleted user {$user->name} (ID: {$user->id})."
+            );
 
             Flux::toast('User removed successfully.');
 
@@ -172,8 +183,8 @@ new class extends Component {
                 </flux:table.row>
             @empty
                 <flux:table.row>
-                    {{-- Updated colspan to 5 to cover the # column --}}
-                    <flux:table.cell colspan="5" class="text-center text-zinc-500 py-6">
+                    {{-- Updated colspan to 6 to cover all columns --}}
+                    <flux:table.cell colspan="6" class="text-center text-zinc-500 py-6">
                         No users found matching your search.
                     </flux:table.cell>
                 </flux:table.row>

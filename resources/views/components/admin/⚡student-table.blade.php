@@ -9,6 +9,7 @@ use Flux\Flux;
 use Illuminate\Support\Facades\Storage;
 use Livewire\WithFileUploads;
 use App\Models\User;
+use App\Helpers\Logger;
 
 new class extends Component {
     use WithPagination, WithFileUploads;
@@ -87,65 +88,65 @@ new class extends Component {
         return $query->paginate(10);
     }
 
-    public function saveThesis(): void
-    {
-        abort_unless(auth()->user()->hasRole('student'), 403);
-        $this->authorize('create', Thesis::class);
+    // public function saveThesis(): void
+    // {
+    //     abort_unless(auth()->user()->hasRole('student'), 403);
+    //     $this->authorize('create', Thesis::class);
 
-        $validated = $this->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'abstract' => ['required', 'string'],
-            'supervisor_id' => ['nullable', 'integer', 'exists:users,id'],
-            'thesisFile' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:20480'],
-        ]);
+    //     $validated = $this->validate([
+    //         'title' => ['required', 'string', 'max:255'],
+    //         'abstract' => ['required', 'string'],
+    //         'supervisor_id' => ['nullable', 'integer', 'exists:users,id'],
+    //         'thesisFile' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:20480'],
+    //     ]);
 
-        if ($validated['supervisor_id'] && !User::role('lecturer')->whereKey($validated['supervisor_id'])->exists()) {
-            $this->addError('supervisor_id', 'Please select a valid lecturer.');
-            return;
-        }
+    //     if ($validated['supervisor_id'] && !User::role('lecturer')->whereKey($validated['supervisor_id'])->exists()) {
+    //         $this->addError('supervisor_id', 'Please select a valid lecturer.');
+    //         return;
+    //     }
 
-        $path = null;
-        $thesis = null;
+    //     $path = null;
+    //     $thesis = null;
 
-        try {
-            if ($this->thesisFile) {
-                $path = $this->thesisFile->store('thesis-documents', 'local');
-            }
+    //     try {
+    //         if ($this->thesisFile) {
+    //             $path = $this->thesisFile->store('thesis-documents', 'local');
+    //         }
 
-            $thesis = Thesis::create([
-                'student_id' => auth()->id(),
-                'supervisor_id' => $validated['supervisor_id'] ?: null,
-                'title' => $validated['title'],
-                'abstract' => $validated['abstract'],
-            ]);
+    //         $thesis = Thesis::create([
+    //             'student_id' => auth()->id(),
+    //             'supervisor_id' => $validated['supervisor_id'] ?: null,
+    //             'title' => $validated['title'],
+    //             'abstract' => $validated['abstract'],
+    //         ]);
 
-            if ($this->thesisFile && $path) {
-                $thesis->document()->create([
-                    'uploaded_by' => auth()->id(),
-                    'document_type' => 'thesis',
-                    'original_name' => $this->thesisFile->getClientOriginalName(),
-                    'storage_path' => $path,
-                    'mime_type' => $this->thesisFile->getMimeType(),
-                    'file_size' => $this->thesisFile->getSize(),
-                    'file_hash' => hash_file('sha256', $this->thesisFile->getRealPath()),
-                    'similarity_score' => null,
-                ]);
-            }
-        } catch (\Throwable $e) {
-            if ($path) {
-                Storage::disk('local')->delete($path);
-            }
-            if ($thesis) {
-                $thesis->delete();
-            }
-            throw $e;
-        }
+    //         if ($this->thesisFile && $path) {
+    //             $thesis->document()->create([
+    //                 'uploaded_by' => auth()->id(),
+    //                 'document_type' => 'thesis',
+    //                 'original_name' => $this->thesisFile->getClientOriginalName(),
+    //                 'storage_path' => $path,
+    //                 'mime_type' => $this->thesisFile->getMimeType(),
+    //                 'file_size' => $this->thesisFile->getSize(),
+    //                 'file_hash' => hash_file('sha256', $this->thesisFile->getRealPath()),
+    //                 'similarity_score' => null,
+    //             ]);
+    //         }
+    //     } catch (\Throwable $e) {
+    //         if ($path) {
+    //             Storage::disk('local')->delete($path);
+    //         }
+    //         if ($thesis) {
+    //             $thesis->delete();
+    //         }
+    //         throw $e;
+    //     }
 
-        $this->resetForm();
-        $this->modal('add-thesis')->close();
-        unset($this->theses);
-        Flux::toast('Thesis submitted successfully.');
-    }
+    //     $this->resetForm();
+    //     $this->modal('add-thesis')->close();
+    //     unset($this->theses);
+    //     Flux::toast('Thesis submitted successfully.');
+    // }
 
     public function editThesis(int $thesisId): void
     {
@@ -278,6 +279,8 @@ new class extends Component {
             'status' => 'submitted',
         ]);
 
+        Logger::action('thesis_submitted', "Student submitted thesis ID: {$thesis->id}");
+
         unset($this->theses);
         Flux::toast('Thesis submitted successfully.');
     }
@@ -346,6 +349,8 @@ new class extends Component {
             />
         </div>
     </div>
+
+    hi
 
     <flux:table :paginate="$this->theses">
         <flux:table.columns>
