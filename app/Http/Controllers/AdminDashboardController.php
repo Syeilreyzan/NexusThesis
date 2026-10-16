@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Thesis;
-use Illuminate\View\View;
 use App\Models\User;
+use Illuminate\View\View;
 
 class AdminDashboardController extends Controller
 {
@@ -19,18 +19,18 @@ class AdminDashboardController extends Controller
         return view('dashboard');
     }
 
-    //update examiner it still need api endpoint of theses to update the exanminer
-    public function updateExaminer(Request $request, Thesis $thesis)
-        {
-            $validated = $request->validate([
-                'examiner_id' => ['nullable', 'exists:users,id'],
-            ]);
+    // update examiner it still need api endpoint of theses to update the exanminer
+    // public function updateExaminer(Request $request, Thesis $thesis)
+    // {
+    //     $validated = $request->validate([
+    //         'examiner_id' => ['nullable', 'exists:users,id'],
+    //     ]);
 
-            $thesis->update([
-                'examiner_id' => $validated['examiner_id'],
-            ]);
+    //     $thesis->update([
+    //         'examiner_id' => $validated['examiner_id'],
+    //     ]);
 
-            return redirect()->route('admin.dashboard')
-                ->with('status', 'Examiner assigned successfully!');
-        }
+    //     return redirect()->route('admin.dashboard')
+    //         ->with('status', 'Examiner assigned successfully!');
+    // }
 }

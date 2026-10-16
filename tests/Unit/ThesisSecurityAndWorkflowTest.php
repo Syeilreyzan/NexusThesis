@@ -2,12 +2,13 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\Thesis;
 use App\Models\AuditLog;
+use App\Models\Thesis;
+use App\Models\User;
+use Database\Seeders\RolePermissionSeeder;
+use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,8 +21,8 @@ class ThesisSecurityAndWorkflowTest extends TestCase
         parent::setUp();
 
         // Automatically seed the essential roles and permissions for every test
-        $this->seed(\Database\Seeders\RoleSeeder::class);
-        $this->seed(\Database\Seeders\RolePermissionSeeder::class);
+        $this->seed(RoleSeeder::class);
+        $this->seed(RolePermissionSeeder::class);
     }
 
     /** @test */
@@ -71,7 +72,7 @@ class ThesisSecurityAndWorkflowTest extends TestCase
 
         $thesis = Thesis::factory()->create([
             'examiner_id' => $examiner->id,
-            'status' => 'pending_approval'
+            'status' => 'pending_approval',
         ]);
 
         $this->actingAs($examiner);
