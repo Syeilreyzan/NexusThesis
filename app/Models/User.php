@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -73,5 +74,26 @@ class User extends Authenticatable implements PasskeyUser
         return Str::length($initials) > 1
             ? Str::substr($initials, 0, 1) . Str::substr($initials, -1)
             : $initials;
+    }
+
+    public function studentTheses(): HasMany
+    {
+        return $this->hasMany(Thesis::class, 'student_id');
+    }
+
+    /**
+     * Get the theses where the user is assigned as the supervisor.
+     */
+    public function supervisedTheses(): HasMany
+    {
+        return $this->hasMany(Thesis::class, 'supervisor_id');
+    }
+
+    /**
+     * Get the theses where the user is assigned as the examiner.
+     */
+    public function examinedTheses(): HasMany
+    {
+        return $this->hasMany(Thesis::class, 'examiner_id');
     }
 }

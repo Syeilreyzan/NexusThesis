@@ -1,23 +1,26 @@
-<x-layouts::app :title="__('Dashboard')">
-    <livewire:pages::teams.pending-invitations-modal />
+<x-layouts::app :title="__(
+    auth()->user()->hasRole('admin')
+        ? 'Dashboard Admin'
+        : (auth()->user()->hasRole('lecturer')
+            ? 'Dashboard Lecturer'
+            : 'Dashboard Student'),
+)">
+    <flux:heading size="2xl" class="pb-4">
+        {{ str(Auth::user()->getRoleNames()->join(', '))->title() }} Dashboard
+    </flux:heading>
 
-    <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
-        {{-- <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-                <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20" />
-            </div>
-            <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-                <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20" />
-            </div>
-            <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-                <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20" />
-            </div>
-        </div>
-        <div class="relative h-full flex-1 overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-            <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20" />
-        </div> --}}
-        @role('lecturer')
-            <livewire:student-table />
+    <div class="flex w-full flex-1 flex-col gap-4 rounded-xl">
+        @role('admin')
+            <livewire:admin.index />
         @endrole
+
+        @role('lecturer')
+            <livewire:lecturer.index />
+        @endrole
+
+        @role('student')
+            <livewire:student.index />
+        @endrole
+
     </div>
 </x-layouts::app>

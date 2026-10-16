@@ -21,21 +21,24 @@ class ThesisPolicy
      */
     public function view(User $user, Thesis $thesis): bool
     {
-        // Admin can view any thesis.
+        // Allow if user is an admin
         if ($user->hasRole('admin')) {
-            return $user->can('view theses');
+            return true;
         }
 
-        // Lecturer can view only assigned theses.
-        if ($user->hasRole('lecturer')) {
-            return $user->can('view theses')
-                && $thesis->supervisor_id === $user->id;
+        // Allow if the user is the student who owns it
+        if ($user->id === $thesis->student_id) {
+            return true;
         }
 
-        // Student can view only their own thesis.
-        if ($user->hasRole('student')) {
-            return $user->can('view theses')
-                && $thesis->student_id === $user->id;
+        // Allow if the user is the assigned supervisor
+        if ($user->id === $thesis->supervisor_id) {
+            return true;
+        }
+
+        // ADD THIS: Allow if the user is the assigned examiner
+        if ($user->id === $thesis->examiner_id) {
+            return true;
         }
 
         return false;

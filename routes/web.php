@@ -37,6 +37,13 @@ Route::middleware('auth')->group(function () {
         ->name('theses.show')
         ->middleware('permission:view theses');
 
+    Route::get('/theses/{thesis}/document/view', [
+        ThesisController::class,
+        'viewDocument',
+    ])
+        ->name('theses.document.view')
+        ->middleware('permission:view theses');
+
     Route::post('/theses', [ThesisController::class, 'store'])
         ->middleware('permission:submit thesis');
 
@@ -89,7 +96,12 @@ Route::view('/student/dashboard', 'dashboard')
 
 // routing for lecturer
 Route::middleware(['auth', 'role:lecturer'])->prefix('lecturer')->group(function () {
-    Route::redirect('/', '/lecturer/dashboard');
+    // Route::redirect('/', '/lecturer/dashboard');
     Route::get('/dashboard', [LecturerDashboardController::class, 'index'])->name('lecturer.dashboard');
+});
+
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+    Route::redirect('/', '/admin/dashboard');
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 });
 require __DIR__ . '/settings.php';

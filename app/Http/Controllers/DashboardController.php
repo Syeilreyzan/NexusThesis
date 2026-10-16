@@ -18,6 +18,10 @@ class DashboardController extends Controller
             return redirect()->route('student.dashboard');
         }
 
+        if ($user->hasRole('student')) {
+            return redirect()->route('student.dashboard');
+        }
+
         return view('dashboard');
     }
 }

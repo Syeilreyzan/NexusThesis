@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Thesis;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 
 class ThesisController extends Controller
 {
@@ -60,5 +61,50 @@ class ThesisController extends Controller
         ]);
 
         return redirect()->route('theses.show', $thesis);
+    }
+
+    // public function viewDocument(Thesis $thesis)
+    // {
+    //     Gate::authorize('view', $thesis);
+
+    //     $document = $thesis->document;
+
+    //     abort_unless($document, 404);
+
+    //     $disk = Storage::disk('local');
+
+    //     abort_unless($disk->exists($document->storage_path), 404);
+
+    //     return $disk->response(
+    //         $document->storage_path,
+    //         basename($document->original_name),
+    //         [
+    //             'Content-Type' => $document->mime_type,
+    //             'Content-Disposition' => 'inline',
+    //             'X-Content-Type-Options' => 'nosniff',
+    //         ]
+    //     );
+    // }
+    public function viewDocument(Thesis $thesis)
+    {
+        Gate::authorize('view', $thesis);
+
+        $document = $thesis->document;
+
+        abort_unless($document, 404);
+
+        $disk = Storage::disk('local');
+
+        abort_unless($disk->exists($document->storage_path), 404);
+
+        return $disk->response(
+            $document->storage_path,
+            basename($document->original_name),
+            [
+                'Content-Type' => $document->mime_type,
+                'Content-Disposition' => 'inline',
+                'X-Content-Type-Options' => 'nosniff',
+            ]
+        );
     }
 }

@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Thesis extends Model
 {
@@ -23,6 +26,9 @@ class Thesis extends Model
         'abstract',
         'status',
         'examiner_access_expires_at',
+        'removal_reason',
+        'grade',
+        'grade_status',
     ];
 
     /**
@@ -35,6 +41,16 @@ class Thesis extends Model
         return [
             'examiner_access_expires_at' => 'datetime',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (Thesis $thesis) {
+            if (empty($thesis->slug)) {
+                $thesis->slug = Str::slug($thesis->title)
+                    . '-' . Str::lower(Str::random(8));
+            }
+        });
     }
 
     /**
@@ -59,5 +75,15 @@ class Thesis extends Model
     public function examiner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'examiner_id');
+    }
+
+    public function document(): HasOne
+    {
+        return $this->hasOne(ThesisDocument::class);
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
     }
 }
