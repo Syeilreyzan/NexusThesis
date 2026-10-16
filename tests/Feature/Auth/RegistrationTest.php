@@ -1,10 +1,11 @@
 <?php
 
 use App\Models\User;
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Support\Facades\Hash;
 
 beforeEach(function () {
-    $this->seed(Database\Seeders\RolePermissionSeeder::class);
+    $this->seed(RolePermissionSeeder::class);
 });
 
 test('registration screen can be rendered', function () {

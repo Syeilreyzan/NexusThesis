@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Thesis;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ThesisController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         Gate::authorize('viewAny', Thesis::class);
 
@@ -32,21 +35,21 @@ class ThesisController extends Controller
         return view('theses.index', compact('theses'));
     }
 
-    public function show(Thesis $thesis)
+    public function show(Thesis $thesis): View
     {
         Gate::authorize('view', $thesis);
 
         return view('theses.show', compact('thesis'));
     }
 
-    public function create()
+    public function create(): View
     {
         Gate::authorize('create', Thesis::class);
 
         return view('theses.create');
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         Gate::authorize('create', Thesis::class);
 
@@ -85,13 +88,13 @@ class ThesisController extends Controller
     //         ]
     //     );
     // }
-    public function viewDocument(Thesis $thesis)
+    public function viewDocument(Thesis $thesis): StreamedResponse
     {
         Gate::authorize('view', $thesis);
 
         $document = $thesis->document;
 
-        abort_unless($document, 404);
+        abort_if($document === null, 404);
 
         $disk = Storage::disk('local');
 

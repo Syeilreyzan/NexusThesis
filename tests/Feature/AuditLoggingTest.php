@@ -3,13 +3,14 @@
 use App\Models\AuditLog;
 use App\Models\Thesis;
 use App\Models\User;
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->seed(Database\Seeders\RolePermissionSeeder::class);
+    $this->seed(RolePermissionSeeder::class);
 });
 
 test('examiner assignment writes a complete audit log entry', function () {
