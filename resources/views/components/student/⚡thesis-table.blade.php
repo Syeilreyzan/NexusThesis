@@ -34,11 +34,10 @@ new class extends Component {
     #[Computed]
     public function theses(): LengthAwarePaginator
     {
-        $user = auth()->user();
-
         $query = Thesis::query()
             ->with(['student', 'supervisor', 'examiner', 'document'])
             ->select(['id', 'student_id', 'supervisor_id', 'examiner_id', 'title', 'status', 'grade', 'created_at'])
+            ->where('student_id', auth()->id()) // <-- This restricts it to the auth student
             ->latest();
 
         if (!empty($this->search)) {
