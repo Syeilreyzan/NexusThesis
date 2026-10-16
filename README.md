@@ -1,87 +1,33 @@
 # NexusThesis
 
-NexusThesis is a Laravel application built with Livewire. These steps set it up locally on Windows or macOS using PHP's built-in development server. Valet and Docker are not required.
+NexusThesis is a postgraduate research and thesis management platform used by the university for proposal submissions, supervision milestones, thesis uploads, examiner evaluations, and final approvals.
 
-## Requirements
+The system handles sensitive academic and research data, including unpublished thesis drafts, confidential examiner reports, and approval records.
 
-- PHP 8.3 or newer, with `pdo_sqlite` and `sqlite3` enabled
-- Composer 2
-- Node.js and npm
-- Git (only if cloning the repository or pulling updates with Git)
+## Where to start
 
-### Windows
+| I am...                                                                  | Read this                              |
+| ------------------------------------------------------------------------ | -------------------------------------- |
+| A student, lecturer, supervisor, examiner, or administrator who wants to understand or use the system | [User Guide](docs/USER_GUIDE.md) |
+| A developer or IT person who needs to install, run, or update the system | [Setup Guide](docs/SETUP.md)           |
 
-Install PHP from [windows.php.net](https://windows.php.net/download/), and add its folder to your `PATH`. Install [Composer](https://getcomposer.org/download/) with the Windows installer and [Node.js LTS](https://nodejs.org/en/download). Install [Git for Windows](https://git-scm.com/download/win) only if you plan to clone the repository or pull updates with Git.
+## Quick start (for developers)
 
-Make sure the `php.ini` used by your command line PHP has the `pdo_sqlite` and `sqlite3` extensions enabled. You can check which `php.ini` is active with:
-
-```powershell
-php --ini
-```
-
-### macOS
-
-Install [Homebrew](https://brew.sh/) if it is not already installed, then install the tools in Terminal:
-
-```sh
-brew install php composer node
-```
-
-## Setup
-
-### Download as a ZIP
-
-1. Open the [NexusThesis GitHub repository](https://github.com/Syeilreyzan/NexusThesis), select **Code**, then **Download ZIP**.
-2. Extract the ZIP archive. On Windows, right-click it and select **Extract All**. On macOS, double-click the ZIP file.
-3. Open PowerShell or Terminal in the extracted project folder. Make sure this folder contains `artisan` and `composer.json`; do not run the setup from an outer folder that only contains another `NexusThesis` folder.
-
-### Clone with Git
-
-If Git is installed, you can instead clone the repository and enter its folder:
+If you already have PHP 8.3+, Composer 2, and Node.js installed:
 
 ```sh
 git clone https://github.com/Syeilreyzan/NexusThesis.git
 cd NexusThesis
-```
-
-The remaining steps are the same whether you downloaded the ZIP or cloned with Git. Run them from the project folder that contains `artisan` and `composer.json`.
-
-Create the SQLite database file, then run the project setup. Use the command for your terminal.
-
-**Windows (PowerShell):**
-
-```powershell
-if (!(Test-Path "database/database.sqlite")) {
-	New-Item -ItemType File -Path "database/database.sqlite" | Out-Null
-}
-composer run setup
-```
-
-**macOS (Terminal):**
-
-```sh
-touch database/database.sqlite
-composer run setup
-```
-
-The setup command installs PHP and JavaScript dependencies, creates `.env` from `.env.example` if needed, generates the application key, runs database migrations, and builds the frontend assets. The application uses SQLite by default. Keep local settings in `.env`; do not commit that file.
-
-## Run the Application
-
-Start Laravel's built-in development server from the project folder:
-
-```sh
+composer setup
+php artisan db:seed
 php artisan serve
 ```
 
-Open [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Stop the server with `Ctrl+C`.
+Then open [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser.
 
-For frontend hot reload while developing, open a second terminal in the project folder and run:
+Missing a tool, using a ZIP download, or hit an error? The full steps, expected output, and troubleshooting are in the [Setup Guide](docs/SETUP.md).
 
-```sh
-npm run dev
-```
-
+## Documentation
 ## Run Database Migrations
 
 The setup command already runs migrations. To apply any new migrations later, run:
@@ -122,10 +68,11 @@ php artisan test tests/Feature/Auth/RegistrationTest.php
 
 ## Getting Updates
 
-If you cloned the repository with Git, update it from the project folder:
+- [User Guide](docs/USER_GUIDE.md): what NexusThesis is, who uses it, how a thesis moves through the system, and how to try a demo. No technical knowledge needed.
+- [Setup Guide](docs/SETUP.md): requirements, installation on Windows and macOS, running the app, updating, and troubleshooting.
 
-```sh
-git pull
-```
+## Security notes
 
-If you downloaded a ZIP, download and extract the latest ZIP to update the project. Keep your existing `.env` and `database/database.sqlite` so your local configuration and data are preserved.
+- Keep local settings in `.env` and never commit that file.
+- Never commit `database/database.sqlite`. It contains real data, including password hashes.
+- The demo accounts and their shared password are for local testing only. Do not seed them in production.
