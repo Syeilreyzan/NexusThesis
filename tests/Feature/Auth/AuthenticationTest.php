@@ -21,7 +21,7 @@ test('users can authenticate using the login screen', function () {
 
     $response
         ->assertSessionHasNoErrors()
-        ->assertRedirect(route('dashboard', absolute: false));
+        ->assertRedirect(route('dashboard'));
 
     $this->assertAuthenticated();
 });
@@ -39,7 +39,8 @@ test('passkey login response redirects to the current team dashboard', function 
 
     $responseData = json_decode((string) $jsonResponse->getContent());
 
-    expect($responseData->redirect)->toBe(route('dashboard', absolute: false));
+    // Expect the full absolute URL instead of a relative path
+    expect($responseData->redirect)->toBe(route('dashboard'));
 });
 
 test('users can not authenticate with invalid password', function () {
