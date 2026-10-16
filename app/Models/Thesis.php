@@ -27,6 +27,8 @@ class Thesis extends Model
         'status',
         'examiner_access_expires_at',
         'removal_reason',
+        'grade',
+        'grade_status',
     ];
 
     /**

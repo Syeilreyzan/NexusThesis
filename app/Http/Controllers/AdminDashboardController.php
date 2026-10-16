@@ -11,12 +11,12 @@ class AdminDashboardController extends Controller
     public function index(): View
     {
         // Query directly from Thesis and eager-load student, supervisor, and examiner
-        $theses = Thesis::with(['student', 'supervisor', 'examiner'])
-            ->latest()
-            ->paginate(10);
-        $lecturers = User::role('lecturer')->orderBy('name')->get();
+        // $theses = Thesis::with(['student', 'supervisor', 'examiner'])
+        //     ->latest()
+        //     ->paginate(10);
+        // $lecturers = User::role('lecturer')->orderBy('name')->get();
 
-        return view('admin.dashboard', compact('theses', 'lecturers'));
+        return view('dashboard');
     }
 
     //update examiner it still need api endpoint of theses to update the exanminer
