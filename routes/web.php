@@ -1,13 +1,11 @@
 <?php
 
+use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LecturerDashboardController;
 use App\Http\Controllers\ThesisController;
-use App\Http\Middleware\EnsureTeamMembership;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\LecturerDashboardController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\AdminDashboardController;
-
 
 // Route::view('/', 'welcome')->name('home');
 
@@ -74,8 +72,7 @@ Route::middleware('auth')->group(function () {
 //         Route::view('dashboard', 'dashboard')->name('dashboard');
 //     });
 
-
-//automating redirect based on role
+// automating redirect based on role
 // to dashboard (smart routing)
 // login became home
 Route::get('/', function () {
@@ -84,9 +81,9 @@ Route::get('/', function () {
     }
 
     return redirect()->route('login');
-})->name("home");
+})->name('home');
 
-//smart routing
+// smart routing
 Route::middleware(['auth', 'role:student|lecturer|admin'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 });
@@ -106,4 +103,4 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
     Route::livewire('/logs', 'pages::admin.logs')->name('admin.logs');
 });
-require __DIR__ . '/settings.php';
+require __DIR__.'/settings.php';

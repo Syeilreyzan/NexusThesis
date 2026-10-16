@@ -42,13 +42,13 @@ class User extends Authenticatable implements PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory,
-        HasTeams,
         HasRoles,
+        HasTeams,
         Notifiable,
         PasskeyAuthenticatable,
         TwoFactorAuthenticatable {
-        HasTeams::teams insteadof HasRoles;
-    }
+            HasTeams::teams insteadof HasRoles;
+        }
 
     /**
      * Get the attributes that should be cast.
@@ -72,10 +72,11 @@ class User extends Authenticatable implements PasskeyUser
         $initials = Str::initials($this->name, true);
 
         return Str::length($initials) > 1
-            ? Str::substr($initials, 0, 1) . Str::substr($initials, -1)
+            ? Str::substr($initials, 0, 1).Str::substr($initials, -1)
             : $initials;
     }
 
+    /** @return HasMany<Thesis, $this> */
     public function studentTheses(): HasMany
     {
         return $this->hasMany(Thesis::class, 'student_id');
@@ -84,6 +85,7 @@ class User extends Authenticatable implements PasskeyUser
     /**
      * Get the theses where the user is assigned as the supervisor.
      */
+    /** @return HasMany<Thesis, $this> */
     public function supervisedTheses(): HasMany
     {
         return $this->hasMany(Thesis::class, 'supervisor_id');
@@ -92,6 +94,7 @@ class User extends Authenticatable implements PasskeyUser
     /**
      * Get the theses where the user is assigned as the examiner.
      */
+    /** @return HasMany<Thesis, $this> */
     public function examinedTheses(): HasMany
     {
         return $this->hasMany(Thesis::class, 'examiner_id');

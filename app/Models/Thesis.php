@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\ThesisFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,12 +12,13 @@ use Illuminate\Support\Str;
 
 class Thesis extends Model
 {
+    /** @use HasFactory<ThesisFactory> */
     use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'student_id',
@@ -48,7 +50,7 @@ class Thesis extends Model
         static::creating(function (Thesis $thesis) {
             if (empty($thesis->slug)) {
                 $thesis->slug = Str::slug($thesis->title)
-                    . '-' . Str::lower(Str::random(8));
+                    .'-'.Str::lower(Str::random(8));
             }
         });
     }
@@ -56,6 +58,7 @@ class Thesis extends Model
     /**
      * Get the student who owns the thesis.
      */
+    /** @return BelongsTo<User, $this> */
     public function student(): BelongsTo
     {
         return $this->belongsTo(User::class, 'student_id');
@@ -64,6 +67,7 @@ class Thesis extends Model
     /**
      * Get the supervisor assigned to the thesis.
      */
+    /** @return BelongsTo<User, $this> */
     public function supervisor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'supervisor_id');
@@ -72,17 +76,19 @@ class Thesis extends Model
     /**
      * Get the examiner assigned to the thesis.
      */
+    /** @return BelongsTo<User, $this> */
     public function examiner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'examiner_id');
     }
 
+    /** @return HasOne<ThesisDocument, $this> */
     public function document(): HasOne
     {
         return $this->hasOne(ThesisDocument::class);
     }
 
-    public function getRouteKeyName()
+    public function getRouteKeyName(): string
     {
         return 'slug';
     }
