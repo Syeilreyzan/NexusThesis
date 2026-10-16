@@ -1,6 +1,6 @@
 # NexusThesis
 
-NexusThesis is a Laravel application built with Livewire. These steps set it up locally on Windows or macOS using PHP's built-in development server. Valet and Docker are not required.
+NexusThesis is postgraduate research and thesis management platform used by the university for proposal submissions, supervision milestones, thesis uploads, examiner evaluations, and final approvals. The system handles sensitive academic and research data, including unpublished thesis drafts, confidential examiner reports, and approval records
 
 ## Requirements
 
@@ -12,12 +12,6 @@ NexusThesis is a Laravel application built with Livewire. These steps set it up 
 ### Windows
 
 Install PHP from [windows.php.net](https://windows.php.net/download/), and add its folder to your `PATH`. Install [Composer](https://getcomposer.org/download/) with the Windows installer and [Node.js LTS](https://nodejs.org/en/download). Install [Git for Windows](https://git-scm.com/download/win) only if you plan to clone the repository or pull updates with Git.
-
-Make sure the `php.ini` used by your command line PHP has the `pdo_sqlite` and `sqlite3` extensions enabled. You can check which `php.ini` is active with:
-
-```powershell
-php --ini
-```
 
 ### macOS
 
@@ -48,23 +42,23 @@ The remaining steps are the same whether you downloaded the ZIP or cloned with G
 
 Create the SQLite database file, then run the project setup. Use the command for your terminal.
 
-**Windows (PowerShell):**
+## Preparing the application
+
+Make sure the `php.ini` used by your command line PHP has the `pdo_sqlite` and `sqlite3` extensions enabled. You can check which `php.ini` is active with:
 
 ```powershell
-if (!(Test-Path "database/database.sqlite")) {
-	New-Item -ItemType File -Path "database/database.sqlite" | Out-Null
-}
-composer run setup
+php --ini
 ```
 
-**macOS (Terminal):**
-
-```sh
-touch database/database.sqlite
-composer run setup
+Install all the required dependency and library with `composer setup` and create database and seed with default user using `artisan db:seed`
+```bash
+php composer setup
+php artisan db:seed
 ```
 
 The setup command installs PHP and JavaScript dependencies, creates `.env` from `.env.example` if needed, generates the application key, runs database migrations, and builds the frontend assets. The application uses SQLite by default. Keep local settings in `.env`; do not commit that file.
+
+You can see the setup script in the `composer.json` and the seed script in `database/seeders/DatabaseSeeder.php`
 
 ## Run the Application
 
@@ -76,7 +70,7 @@ php artisan serve
 
 Open [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Stop the server with `Ctrl+C`.
 
-For frontend hot reload while developing, open a second terminal in the project folder and run:
+For frontend hot reload while developing, open a second terminal in the project folder and run (`Optional as this feature commonly use for developing application`):
 
 ```sh
 npm run dev
