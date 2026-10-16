@@ -82,6 +82,20 @@ For frontend hot reload while developing, open a second terminal in the project 
 npm run dev
 ```
 
+## Run Tests
+
+Run the complete test suite from the project folder:
+
+```sh
+php artisan test
+```
+
+To run one test file, pass its path:
+
+```sh
+php artisan test tests/Feature/Auth/RegistrationTest.php
+```
+
 ## Getting Updates
 
 If you cloned the repository with Git, update it from the project folder:
