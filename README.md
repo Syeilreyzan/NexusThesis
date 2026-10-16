@@ -82,6 +82,30 @@ For frontend hot reload while developing, open a second terminal in the project 
 npm run dev
 ```
 
+## Run Database Migrations
+
+The setup command already runs migrations. To apply any new migrations later, run:
+
+```sh
+php artisan migrate
+```
+
+To drop all tables, recreate the database schema, and run the default seeders from scratch, use:
+
+```sh
+php artisan migrate:fresh --seed
+```
+
+**Warning:** `migrate:fresh --seed` deletes all existing data in the database. Do not use it if you need to keep your data.
+
+## Seed the Database
+
+After setup has created the database, run the default seeders to add the project's roles, permissions, and sample user and thesis data:
+
+```sh
+php artisan db:seed
+```
+
 ## Run Tests
 
 Run the complete test suite from the project folder:
