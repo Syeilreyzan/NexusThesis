@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Gate;
 use Livewire\WithFileUploads;
 use App\Models\User;
 use App\Helpers\Logger;
+use Livewire\Attributes\Locked;
 
 new class extends Component {
     use WithPagination, WithFileUploads;
@@ -20,10 +21,12 @@ new class extends Component {
     public string $abstract = '';
     public $thesisFile = null;
     public ?int $supervisor_id = null;
-    public ?int $selectedThesisId = null;
     public bool $showThesisModal = false;
     public string $removalReason = '';
     public string $search = '';
+
+    #[Locked]
+    public ?int $selectedThesisId = null;
 
     public ?string $previewDocumentUrl = null;
 

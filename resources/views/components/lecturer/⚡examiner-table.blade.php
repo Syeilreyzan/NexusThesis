@@ -6,15 +6,17 @@ use Livewire\WithPagination;
 use Livewire\Attributes\Computed;
 use Flux\Flux;
 use App\Helpers\Logger; // Added Logger import
+use Livewire\Attributes\Locked;
 
 new class extends Component {
     use WithPagination;
 
     public string $search = '';
     public string $gradeFilter = '';
-
-    public ?int $selectedThesisId = null;
     public ?string $previewDocumentUrl = null;
+
+    #[Locked]
+    public ?int $selectedThesisId = null;
 
     // Grading properties
     public ?int $gradeScore = null;
@@ -81,12 +83,21 @@ new class extends Component {
         if (!$this->selectedThesisId) {
             return null;
         }
-        return Thesis::find($this->selectedThesisId);
+        $thesis = Thesis::find($this->selectedThesisId);
+
+        if ($thesis && $thesis->examiner_id !== auth()->id()) {   // examiner_id for the examiner one
+            abort(403);
+        }
+
+        return $thesis;
     }
 
     public function previewThesis(int $thesisId)
     {
         $thesis = Thesis::with('document')->findOrFail($thesisId);
+        if ($thesis->examiner_id !== auth()->id()) {   // or examiner_id
+                abort(403, 'Unauthorized action.');
+            }
 
         $this->selectedThesisId = $thesis->id;
 

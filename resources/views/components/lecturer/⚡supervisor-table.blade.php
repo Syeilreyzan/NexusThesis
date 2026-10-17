@@ -6,13 +6,17 @@ use Livewire\WithPagination;
 use Livewire\Attributes\Computed;
 use Flux\Flux;
 use App\Helpers\Logger;
+use Livewire\Attributes\Locked;
+
 
 new class extends Component {
     use WithPagination;
 
     public string $search = '';
-    public ?int $selectedThesisId = null;
     public ?string $previewDocumentUrl = null;
+
+    #[Locked]
+    public ?int $selectedThesisId = null;
 
     public function updatedSearch()
     {
@@ -55,13 +59,23 @@ new class extends Component {
             return null;
         }
 
-        return Thesis::with(['student', 'document'])->find($this->selectedThesisId);
+       $thesis =  Thesis::with(['student', 'document'])->find($this->selectedThesisId);
+
+        if ($thesis && $thesis->supervisor_id !== auth()->id()) {   // examiner_id for the examiner one
+            abort(403);
+        }
+
+        return $thesis;
     }
 
     // Point back to your ThesisDocumentController to view the uploaded file
     public function previewThesis(int $thesisId)
     {
         $thesis = Thesis::with('document')->findOrFail($thesisId);
+
+        if ($thesis->supervisor_id !== auth()->id()) {   // or examiner_id
+                abort(403, 'Unauthorized action.');
+            }
 
         $this->selectedThesisId = $thesis->id;
 
