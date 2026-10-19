@@ -22,14 +22,14 @@ class UserSeeder extends Seeder
             Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
         }
 
-        $password = Hash::make('Password123!');
+        $password = 'Password123!';
 
         // 2. Create 1 Admin
         User::updateOrCreate(
             ['email' => 'admin@nexusthesis.com'],
             [
                 'name' => 'System Admin',
-                'password' => $password,
+                'password' => Hash::make($password),
             ]
         )->syncRoles(['admin']);
 
@@ -40,7 +40,7 @@ class UserSeeder extends Seeder
                 ['email' => sprintf('lecturer%02d@nexusthesis.com', $i)],
                 [
                     'name' => sprintf('Lecturer %02d', $i),
-                    'password' => $password,
+                    'password' => Hash::make($password),
                 ]
             );
             $lecturers[$i]->syncRoles(['lecturer']);
@@ -53,7 +53,7 @@ class UserSeeder extends Seeder
                 ['email' => sprintf('student%02d@nexusthesis.com', $i)],
                 [
                     'name' => sprintf('Student %02d', $i),
-                    'password' => $password,
+                    'password' => Hash::make($password),
                 ]
             );
             $students[$i]->syncRoles(['student']);
