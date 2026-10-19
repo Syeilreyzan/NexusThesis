@@ -89,6 +89,13 @@ First, make sure the `php.ini` used by your command-line PHP has the `pdo_sqlite
 php --ini
 ```
 
+`composer setup` runs the dependency installation commands as part of setup. If you only need to install or reinstall dependencies without running the full setup, use:
+
+```sh
+composer install
+npm install
+```
+
 Then install the dependencies, create the database, and seed the default users:
 
 ```sh
