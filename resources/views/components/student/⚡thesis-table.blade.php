@@ -9,10 +9,10 @@ use Flux\Flux;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Livewire\Attributes\Locked;
 use Livewire\WithFileUploads;
 use App\Models\User;
 use App\Helpers\Logger;
-use Livewire\Attributes\Locked;
 
 new class extends Component {
     use WithPagination, WithFileUploads;
@@ -65,12 +65,17 @@ new class extends Component {
     }
 
     #[Computed]
-    public function selectedThesis()
+    public function selectedThesis(): ?Thesis
     {
         if (!$this->selectedThesisId) {
             return null;
         }
-        return Thesis::with(['document', 'supervisor', 'examiner'])->find($this->selectedThesisId);
+
+        $thesis = Thesis::with(['document', 'supervisor', 'examiner'])->findOrFail($this->selectedThesisId);
+
+        $this->authorize('view', $thesis);
+
+        return $thesis;
     }
 
     public function viewThesis(int $thesisId): void
